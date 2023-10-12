@@ -1,48 +1,73 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>ToDoList</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-      crossorigin="anonymous"/>
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.5.1/main.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.5.1/main.css" rel="stylesheet" />
     <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
 </head>
 
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#blogModal">블로그 등록</button>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#eventModal">일정 추가</button>
+    <div class="top-navbar">
+        <!-- 카테고리 필터 -->
+        <div class="category-filter">
+            <select>
+                <option value="all">모든 카테고리</option>
+                <option value="work">직장</option>
+                <option value="personal">개인</option>
+                <option value="hobby">취미</option>
+            </select>
         </div>
-    </nav>
+        <!-- 정렬 옵션 -->
+        <div class="sort-options">
+            <select>
+                <option value="due-date">기한별</option>
+                <option value="importance">중요도별</option>
+                <option value="creation-date">생성 날짜별</option>
+            </select>
+        </div>
+        <!-- 검색 바 -->
+        <div class="search-bar">
+            <input type="text" placeholder="할 일 검색...">
+        </div>
+        <!-- 테마 변경 버튼 -->
+        <div class="theme-toggle">
+            <button>테마 변경</button>
+        </div>
+
+        <ul class="navbar-nav ml-auto"> <!-- 오른쪽 정렬을 위해 ml-auto 클래스 사용 -->
+            <li class="nav-item">
+                <a class="nav-link" href="#">{{ user_id }}님 환영합니다!</a>
+            </li>
+        </ul>
+    </div>
 
     <!-- Main  -->
     <main class="container">
         <div class="row">
-          <!-- 달력 -->
+            <!-- 달력 -->
             <div id="calendar" class="col-md-6 section"></div>
 
             <!-- 투두리스트 -->
             <div id="todoList" class="col-md-6 section">
                 <h1>Todo List</h1>
-                <form action="{{ url_for('home')}}" class = "input-container" method="POST">
+                <form action="{{ url_for('home')}}" class="input-container" method="POST">
                     <input type="text" placeholder="Enter Todo" id="input-todo" name="todo_name">
                     <button id="add-todo">+</button>
                 </form>
-                <h2>Todos</h2>
+                <!-- <h2>Todos</h2> -->
                 <div class="todo-container">
                     {% for item in items %}
                     <div class="todo">
                         <p>{{ item.name}}</p>
                         <div class="actions">
                             <form action="{{ url_for('checked_todo', todo_id=item.id) }}" method="POST">
-                                <input type="checkbox" {% if item.checked %}checked{% endif %} onchange="this.form.submit()">
+                                <input type="checkbox" {% if item.checked %}checked{% endif %}
+                                    onchange="this.form.submit()">
                             </form>
                             <form action="{{ url_for('delete_todo', todo_id=item.id) }}" method="POST">
                                 <button>Delete</button>
@@ -60,19 +85,22 @@
         <div class="container">
             <div class="card-columns" id="blogAddresses">
                 <!-- 블로그주소 카드가 여기에 추가 -->
+                <div class="container buttons-before-footer" style="
+    margin-bottom: 30px;
+    margin-top: 0px;
+">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#blogModal">블로그
+                        등록</button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#eventModal">일정
+                        추가</button>
+                </div>
             </div>
         </div>
     </footer>
 
     <!-- 블로그주소 모달창 -->
-    <div
-        class="modal fade"
-        id="blogModal"
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="blogModalLabel"
-        aria-hidden="true"
-    >
+    <div class="modal fade" id="blogModal" tabindex="-1" role="dialog" aria-labelledby="blogModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -86,17 +114,12 @@
                     <!-- 블로그주소 넣는 폼 -->
                     <form id="blogForm">
                         <div class="mb-3">
-                            <label for="blogName" class="form-label">이름:</label>
-                            <input type="text" class="form-control" id="blogName" name="blogName"/>
+                            <label for="blogName" class="form-label">블로그 이름:</label>
+                            <input type="text" class="form-control" id="blogName" name="blogName" />
                         </div>
                         <div class="mb-3">
                             <label for="blogAddress" class="form-label">블로그 주소:</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="blogAddress"
-                                name="blogAddress"
-                            />
+                            <input type="text" class="form-control" id="blogAddress" name="blogAddress" />
                         </div>
                         <button type="submit" class="btn btn-primary">등록</button>
                     </form>
@@ -106,7 +129,8 @@
     </div>
 
     <!-- 일정 추가 모달창 -->
-    <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -121,11 +145,11 @@
                     <form id="eventForm">
                         <div class="mb-3">
                             <label for="eventName" class="form-label">일정 이름:</label>
-                            <input type="text" class="form-control" id="eventName" name="eventName"/>
+                            <input type="text" class="form-control" id="eventName" name="eventName" />
                         </div>
                         <div class="mb-3">
                             <label for="eventDate" class="form-label">일정 날짜:</label>
-                            <input type="date" class="form-control" id="eventDate" name="eventDate"/>
+                            <input type="date" class="form-control" id="eventDate" name="eventDate" />
                         </div>
                         <button type="submit" class="btn btn-primary">추가</button>
                     </form>
@@ -136,8 +160,7 @@
 
     <!-- 자바스크립트 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.5.1/main.js"></script>

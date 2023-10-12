@@ -8,8 +8,8 @@ from bson.objectid import ObjectId
 app = Flask(__name__)
 
 SECRET_KEY = "XJDKLSDJSKLDJASDNJSLK3123DJNKLDJAA1231"
-client = MongoClient('mongodb+srv://sparta:test@cluster0.t100elz.mongodb.net/?retryWrites=true&w=majority')
-db = client['todo_db']
+client = MongoClient('mongodb+srv://wideskyinme:test@cluster0.ohomgc8.mongodb.net/?retryWrites=true&w=majority')
+db = client.sypark
 collection = db['todos']
 
 # 메인 페이지
@@ -57,7 +57,8 @@ def after_login():
 
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        return redirect(url_for('home'))   
+        user_id = payload["id"]
+        return redirect(url_for('home', user_id=user_id))  # user_id를 함께 전달
 
     except jwt.ExpiredSignatureError:
         return redirect("/call_login")  
@@ -74,9 +75,21 @@ def call_register():
 
 # todolist
 
-@app.route("/todolist", methods = ["GET", "POST"])
+@app.route("/todolist", methods=["GET", "POST"])
 def home():
-    if (request.method == "POST"):
+    token_receive = request.cookies.get('mytoken')
+    user_id = None
+
+    if token_receive:
+        try:
+            payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+            user_id = payload["id"]
+        except jwt.ExpiredSignatureError:
+            pass  # 토큰이 만료되었습니다.
+        except jwt.exceptions.DecodeError:
+            pass  # 토큰이 유효하지 않습니다.
+    
+    if request.method == "POST":
         todo_name = request.form["todo_name"]
         todo = {
             'id': ObjectId(),
@@ -86,7 +99,7 @@ def home():
         collection.insert_one(todo)
         
     todos = list(collection.find({}))
-    return render_template("index.html", items=todos)
+    return render_template("index.html", items=todos, user_id=user_id)  # user_id를 템플릿으로 전달
 
 @app.route("/checked/<string:todo_id>", methods=["POST"])
 def checked_todo(todo_id):
