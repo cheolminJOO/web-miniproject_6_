@@ -115,6 +115,7 @@ h2 {
   height: 30px;
   font-size: 1.25rem;
   flex: 1;
+  background-color: #444;
 }
 
 #add-todo {
@@ -151,7 +152,7 @@ h2 {
 
 .actions > form > button {
   font-family:Arial, Helvetica, sans-serif;
-  background-color: red;
+  background-color: rgb(182, 28, 28);
   color: white;
   border : none;
   padding: 5px;
