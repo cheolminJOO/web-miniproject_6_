@@ -40,9 +40,12 @@
         </div>
 
         <ul class="navbar-nav ml-auto"> <!-- 오른쪽 정렬을 위해 ml-auto 클래스 사용 -->
-            <li class="nav-item">
-                <a class="nav-link" href="#">{{ user_id }}님 환영합니다!</a>
-            </li>
+            <div class="d-flex">
+                <a class="nav-link" href="#">{{ user_id }}님 환영합니다! &nbsp;</a>
+                <form action="{{ url_for('index')}}" method="GET">
+                    <button class="btn btn-danger ml-2">로그아웃</button>
+                </form>
+            </div>
         </ul>
     </div>
 

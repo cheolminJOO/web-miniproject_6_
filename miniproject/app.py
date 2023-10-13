@@ -85,21 +85,23 @@ def home():
             payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
             user_id = payload["id"]
         except jwt.ExpiredSignatureError:
-            pass  # 토큰이 만료되었습니다.
+            pass  
         except jwt.exceptions.DecodeError:
-            pass  # 토큰이 유효하지 않습니다.
-    
+            pass  
+
     if request.method == "POST":
         todo_name = request.form["todo_name"]
         todo = {
             'id': ObjectId(),
             'name': todo_name,
             'checked': False,
+            'user_id': user_id  
         }
         collection.insert_one(todo)
-        
-    todos = list(collection.find({}))
-    return render_template("index.html", items=todos, user_id=user_id)  # user_id를 템플릿으로 전달
+
+    todos = list(collection.find({'user_id': user_id})) 
+    return render_template("index.html", items=todos, user_id=user_id)
+
 
 @app.route("/checked/<string:todo_id>", methods=["POST"])
 def checked_todo(todo_id):
