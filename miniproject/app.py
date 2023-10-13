@@ -1,5 +1,5 @@
 import datetime
-from flask import Flask, render_template, request, redirect, jsonify, url_for
+from flask import Flask, render_template, request, redirect, jsonify, url_for, make_response
 from pymongo import MongoClient
 import hashlib
 import jwt
@@ -15,7 +15,14 @@ collection = db['todos']
 # 메인 페이지
 @app.route('/')
 def index():
-    return render_template('login.html')
+    # Render the login page
+    response = make_response(render_template('login.html'))
+    
+    # Delete the 'mytoken' cookie
+    response.delete_cookie('mytoken')
+    
+    return response
+
 
 # 회원가입
 @app.route('/signup', methods=['POST'])
